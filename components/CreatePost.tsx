@@ -85,7 +85,7 @@ function CreatePost() {
                 </>
               ) : (
                 <>
-                  <SendIcon className="size-4 mr-2" />
+                  <SendIcon className="size-4 mr-1" />
                   Post
                 </>
               )}
