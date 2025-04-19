@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { NotificationType } from "@prisma/client";
 
 export async function syncUser() {
   try {
@@ -100,5 +101,67 @@ export async function getRandomUsers() {
   } catch (error) {
     console.error("Error fetching random users:", error);
     return [];
+  }
+}
+
+export async function toggleFollow(targetUserId: string) {
+  console.log("toggle follow was called");
+
+  try {
+    const userId = await getDbUserId();
+
+    if (!userId) {
+      return;
+    }
+
+    if (userId === targetUserId) {
+      throw new Error("You cannot follow yourself");
+    }
+
+    const existingFollow = await prisma.follows.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: userId,
+          followingId: targetUserId,
+        },
+      },
+    });
+
+    if (existingFollow) {
+      console.log("Unfollowing");
+
+      await prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: userId,
+            followingId: targetUserId,
+          },
+        },
+      });
+    } else {
+      console.log("Following");
+      console.log("Sending notification of type:", NotificationType.FOLLOW);
+
+      await prisma.$transaction([
+        prisma.follows.create({
+          data: {
+            followerId: userId,
+            followingId: targetUserId,
+          },
+        }),
+        prisma.notification.create({
+          data: {
+            type: NotificationType.FOLLOW,
+            creatorId: userId,
+            userId: targetUserId,
+          },
+        }),
+      ]);
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.log("Error in toggleFollow: ", error);
+    return { success: false, error: "Failed to follow" };
   }
 }
