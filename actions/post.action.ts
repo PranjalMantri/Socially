@@ -148,3 +148,84 @@ export async function toggleLike(postId: string) {
     return { success: false, error: "Failed to like post" };
   }
 }
+
+export async function createComment(postId: string, content: string) {
+  const userId = await getDbUserId();
+
+  if (!userId) return { success: false, error: "User not found" };
+  if (!content) return { success: false, error: "Comment cannot be empty" };
+
+  const post = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+  });
+
+  if (!post) {
+    return { success: false, error: "Post not found" };
+  }
+
+  try {
+    const [comment] = await prisma.$transaction(async (tx) => {
+      const newComment = await tx.comment.create({
+        data: {
+          content: content,
+          postId: postId,
+          authorId: userId,
+        },
+      });
+
+      if (post.authorId !== userId) {
+        await tx.notification.create({
+          data: {
+            type: NotificationType.COMMENT,
+            creatorId: userId,
+            userId: post.authorId,
+            postId,
+            commentId: newComment.id,
+          },
+        });
+      }
+
+      return [newComment];
+    });
+
+    revalidatePath(`/`);
+    return { success: true, comment };
+  } catch (error) {
+    console.log("Error in createComment: ", error);
+    return { success: false, error: "Failed to create comment" };
+  }
+}
+
+export async function deletePost(postId: string) {
+  try {
+    const userId = await getDbUserId();
+
+    if (!userId) return { success: false, error: "User not found" };
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) return { success: false, error: "Post not found" };
+
+    if (post.authorId !== userId) {
+      return { success: false, error: "You are not the author of this post" };
+    }
+
+    await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.log("Error in deletePost: ", error);
+    return { success: false, error: "Failed to delete post" };
+  }
+}
