@@ -63,7 +63,7 @@ export async function getDbUserId() {
   const { userId: clerkId } = await auth();
 
   if (!clerkId) {
-    throw new Error("Unauthorized");
+    return null;
   }
 
   const user = await getUserByClerkId(clerkId);
@@ -76,6 +76,10 @@ export async function getDbUserId() {
 export async function getRandomUsers() {
   try {
     const userId = await getDbUserId();
+
+    if (!userId) {
+      return [];
+    }
 
     const randomUsers = await prisma.user.findMany({
       where: {
@@ -105,8 +109,6 @@ export async function getRandomUsers() {
 }
 
 export async function toggleFollow(targetUserId: string) {
-  console.log("toggle follow was called");
-
   try {
     const userId = await getDbUserId();
 
@@ -128,8 +130,6 @@ export async function toggleFollow(targetUserId: string) {
     });
 
     if (existingFollow) {
-      console.log("Unfollowing");
-
       await prisma.follows.delete({
         where: {
           followerId_followingId: {
@@ -139,9 +139,6 @@ export async function toggleFollow(targetUserId: string) {
         },
       });
     } else {
-      console.log("Following");
-      console.log("Sending notification of type:", NotificationType.FOLLOW);
-
       await prisma.$transaction([
         prisma.follows.create({
           data: {
