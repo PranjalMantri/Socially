@@ -1,8 +1,8 @@
 import { getRandomUsers } from "@/actions/user.action";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import FollowButton from "./FollowButton";
 import Link from "next/link";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 async function WhoToFollow() {
   const users = await getRandomUsers();

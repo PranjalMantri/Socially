@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -9,6 +9,7 @@ import { Card, CardContent } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 import { createPost } from "@/actions/post.action";
 import toast from "react-hot-toast";
+import { Avatar, AvatarImage } from "./ui/avatar";
 
 function CreatePost() {
   const { user } = useUser();
