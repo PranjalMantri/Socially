@@ -8,6 +8,10 @@ export async function createPost(content: string, imageUrl: string) {
   try {
     const userId = await getDbUserId();
 
+    if (!userId) {
+      return { success: false, error: "User not found" };
+    }
+
     const post = await prisma.post.create({
       data: {
         content: content,
@@ -21,5 +25,56 @@ export async function createPost(content: string, imageUrl: string) {
   } catch (error) {
     console.log("Error in creat post: ", error);
     return { success: false, error: "Failed to create post" };
+  }
+}
+
+export async function getPosts() {
+  try {
+    const posts = await prisma.post.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            image: true,
+          },
+        },
+        comments: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: true,
+            likes: true,
+          },
+        },
+      },
+    });
+
+    return posts;
+  } catch (error) {
+    console.log("Error in getPosts: ", error);
+    throw new Error("Failed to fetch posts");
   }
 }
