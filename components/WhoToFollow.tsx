@@ -7,7 +7,7 @@ import Link from "next/link";
 async function WhoToFollow() {
   const users = await getRandomUsers();
 
-  if (!users) return null;
+  if (users.length === 0) return null;
 
   return (
     <Card>
