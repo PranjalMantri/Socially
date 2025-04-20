@@ -6,12 +6,11 @@ import { getDbUserId } from "./user.action";
 export async function getNotifications() {
   try {
     const userId = await getDbUserId();
-
     if (!userId) return [];
 
     const notifications = await prisma.notification.findMany({
       where: {
-        id: userId,
+        userId,
       },
       include: {
         creator: {
@@ -20,6 +19,20 @@ export async function getNotifications() {
             name: true,
             username: true,
             image: true,
+          },
+        },
+        post: {
+          select: {
+            id: true,
+            content: true,
+            image: true,
+          },
+        },
+        comment: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
           },
         },
       },
@@ -35,7 +48,7 @@ export async function getNotifications() {
   }
 }
 
-export async function markNotificationAsRead(notificationIds: string[]) {
+export async function markNotificationsAsRead(notificationIds: string[]) {
   try {
     await prisma.notification.updateMany({
       where: {
