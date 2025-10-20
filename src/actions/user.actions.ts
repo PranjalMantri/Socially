@@ -21,7 +21,7 @@ export async function syncUser() {
     const dbUser = await prisma.user.create({
       data: {
         clerkId: userId,
-        name: `${user.firstName || ""} + ${user.lastName || ""}`,
+        name: `${user.firstName || ""}` + " " + `${user.lastName || ""}`,
         username:
           user.username ?? user.emailAddresses[0].emailAddress.split("@")[0],
         email: user.emailAddresses[0].emailAddress,
@@ -33,4 +33,20 @@ export async function syncUser() {
   } catch (error) {
     console.error("Error in sync user: ", error);
   }
+}
+
+export async function getUserByClerkId(clerkId: string) {
+  return await prisma.user.findUnique({
+    where: {
+      clerkId,
+    },
+    include: {
+      _count: {
+        select: {
+          followers: true,
+          following: true,
+        },
+      },
+    },
+  });
 }
