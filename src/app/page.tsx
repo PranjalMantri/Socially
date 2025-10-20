@@ -1,3 +1,13 @@
+import CreatePost from "@/components/CreatePost";
+
 export default function Home() {
-  return <div>Home page content</div>;
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
+      <div className="lg:col-span-6">
+        <CreatePost />
+      </div>
+
+      <div className="hidden lg:block lg:col-span-4">Suggested Users </div>
+    </div>
+  );
 }
