@@ -75,3 +75,141 @@ export async function getPosts() {
     throw new Error("Error fetching posts");
   }
 }
+
+export async function toggleLike(postId: string) {
+  try {
+    const userId = await getDbUserId();
+    if (!userId) return null;
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { authorId: true },
+    });
+
+    if (!post) throw new Error("Post not found");
+
+    if (existingLike) {
+      // unlike
+      await prisma.like.delete({
+        where: {
+          userId_postId: {
+            userId,
+            postId,
+          },
+        },
+      });
+    } else {
+      // like
+      await prisma.$transaction([
+        prisma.like.create({
+          data: {
+            postId,
+            userId,
+          },
+        }),
+
+        ...(post.authorId === userId
+          ? []
+          : [
+              prisma.notification.create({
+                data: {
+                  notificationType: "LIKE",
+                  postId,
+                  creatorId: userId,
+                  userId: post.authorId,
+                },
+              }),
+            ]),
+      ]);
+    }
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (err) {
+    console.error("Error liking the post: ", err);
+    return { success: false, error: "Error liking the post" };
+  }
+}
+
+export async function createComment(postId: string, content: string) {
+  try {
+    const userId = await getDbUserId();
+    if (!userId) return null;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { authorId: true },
+    });
+
+    if (!post) throw new Error("Post not found");
+
+    const result = await prisma.$transaction(async (tx) => {
+      const newComment = await tx.comment.create({
+        data: {
+          authorId: userId,
+          postId,
+          comment: content,
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          notificationType: "COMMENT",
+          userId: post.authorId,
+          creatorId: userId,
+          postId,
+          commentId: newComment.id,
+        },
+      });
+
+      return newComment;
+    });
+
+    console.log(result);
+
+    revalidatePath("/");
+    return { success: true, result };
+  } catch (err) {
+    console.error("Error creating comment: ", err);
+    return { success: false, error: "Error creating comment" };
+  }
+}
+
+export async function deletePost(postId: string) {
+  try {
+    const userId = await getDbUserId();
+    if (!userId) return;
+
+    const post = await prisma.post.findUnique({
+      where: {
+        id: postId,
+      },
+    });
+
+    if (!post) throw new Error("Post does not exist");
+
+    if (post.authorId !== userId)
+      throw new Error("You are not authorized to delete this post");
+
+    await prisma.post.delete({
+      where: {
+        id: postId,
+      },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting post: ", err);
+    return { success: false, error: "Error deleting post" };
+  }
+}
