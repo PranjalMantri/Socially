@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Socially
+
+A modern, full-stack social media platform built with Next.js, TypeScript, Prisma, and Tailwind CSS. Socially lets users create posts, follow profiles, receive notifications, and more—all with a beautiful, responsive UI.
+
+## Features
+
+- 📝 **Create & Delete Posts**
+- 👤 **User Profiles** (with username-based routing)
+- 👥 **Follow/Unfollow Users**
+- 🔔 **Real-time Notifications**
+- 📷 **Image Uploads**
+- 🌗 **Light/Dark Mode Toggle**
+- 📱 **Responsive Design** (Desktop & Mobile Navbars)
+- ⚡ **Fast & Modern UI** (Shadcn UI, Skeletons, Dialogs)
+- 🔒 **Authentication** (NextAuth.js)
+- 🗄️ **Database** (Prisma + PostgreSQL)
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/) (App Router)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Prisma](https://www.prisma.io/) ORM
+- [PostgreSQL](https://www.postgresql.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [NextAuth.js](https://next-auth.js.org/)
+- [UploadThing](https://uploadthing.com/) (for file uploads)
+- [Shadcn UI](https://ui.shadcn.com/) (UI components)
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/PranjalMantri/Socially.git
+   cd Socially
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+3. **Configure environment variables:**
+   - Copy `.env.example` to `.env` and fill in your secrets.
+   ```bash
+   cp .env.example .env
+   ```
+4. **Set up the database:**
+   - Make sure your `DATABASE_URL` is correct in `.env`.
+   - Run Prisma migrations:
+   ```bash
+   npx prisma migrate dev
+   ```
+5. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+6. **Visit** [http://localhost:3000](http://localhost:3000)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Project Structure
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+├── prisma/                # Prisma schema
+├── public/                # Static assets
+├── src/
+│   ├── actions/           # Server actions (posts, profiles, notifications)
+│   ├── app/               # Next.js app router pages & layouts
+│   ├── components/        # UI components (Navbar, PostCard, etc.)
+│   ├── generated/prisma/  # Generated Prisma client
+│   ├── lib/               # Utility libraries (prisma, uploadthing)
+│   └── middleware.ts      # Middleware
+├── .env.example           # Example environment variables
+├── package.json           # Project metadata & scripts
+└── README.md              # Project documentation
+```
