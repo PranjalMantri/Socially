@@ -9,12 +9,13 @@ import { Button } from "./ui/button";
 import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { createPost } from "@/actions/post.action";
 import toast from "react-hot-toast";
+import ImageUpload from "./ImageUpload";
 
 function CreatePost() {
   const { user } = useUser();
 
   const [content, setContent] = useState("");
-  const [image, setImage] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [isPosting, setIsPosting] = useState(false);
   const [showImageUpload, setShowImageUpload] = useState(false);
 
@@ -24,11 +25,11 @@ function CreatePost() {
     setIsPosting(true);
 
     try {
-      const result = await createPost(content, image);
+      const result = await createPost(content, imageUrl);
 
       if (result?.success) {
         setContent("");
-        setImage("");
+        setImageUrl("");
         setShowImageUpload(false);
       }
 
@@ -58,6 +59,19 @@ function CreatePost() {
             />
           </div>
 
+          {(showImageUpload || imageUrl) && (
+            <div className="border rounded-lg p-4">
+              <ImageUpload
+                endpoint="postImage"
+                value={imageUrl}
+                onChange={(url) => {
+                  setImageUrl(url);
+                  if (!url) setShowImageUpload(false);
+                }}
+              />
+            </div>
+          )}
+
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-2">
               <Button
@@ -75,7 +89,7 @@ function CreatePost() {
             <Button
               className="flex items-center"
               onClick={handleSubmit}
-              disabled={(!content.trim() && !image) || isPosting}
+              disabled={(!content.trim() && !imageUrl) || isPosting}
             >
               {isPosting ? (
                 <>
