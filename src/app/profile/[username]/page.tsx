@@ -5,16 +5,22 @@ import {
   isFollowing,
 } from "@/actions/profile.action";
 import ProfilePageClient from "@/components/ProfilePageClient";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
   const user = await getProfileByUsername(username);
-  if (!user) return;
+  if (!user) {
+    return {
+      title: "User Not Found",
+      description: "Profile not available",
+    };
+  }
 
   return {
     title: user.name,
@@ -22,7 +28,11 @@ export async function generateMetadata({
   };
 }
 
-async function ProfilePage({ params }: { params: { username: string } }) {
+async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
   const { username } = await params;
 
   const user = await getProfileByUsername(username);
