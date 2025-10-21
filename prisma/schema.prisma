@@ -102,7 +102,7 @@ model Notification {
   user    User     @relation("NotificationsReceived", fields: [userId], references: [id])
   creator User     @relation("NotificationsCreated", fields: [creatorId], references: [id])
   post    Post?    @relation(fields: [postId], references: [id])
-  Comment Comment? @relation(fields: [commentId], references: [id])
+  comment Comment? @relation(fields: [commentId], references: [id])
 
   @@index([userId])
   @@index([creatorId])
