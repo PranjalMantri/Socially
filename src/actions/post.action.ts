@@ -161,15 +161,17 @@ export async function createComment(postId: string, content: string) {
         },
       });
 
-      await tx.notification.create({
-        data: {
-          notificationType: "COMMENT",
-          userId: post.authorId,
-          creatorId: userId,
-          postId,
-          commentId: newComment.id,
-        },
-      });
+      if (userId !== post.authorId) {
+        await tx.notification.create({
+          data: {
+            notificationType: "COMMENT",
+            userId: post.authorId,
+            creatorId: userId,
+            postId,
+            commentId: newComment.id,
+          },
+        });
+      }
 
       return newComment;
     });
