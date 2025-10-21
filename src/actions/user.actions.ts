@@ -122,7 +122,6 @@ export async function toggleFollow(targetUserId: string) {
     });
 
     if (existingFollow) {
-      console.log("user already follows");
       // unfollow
       await prisma.follows.delete({
         where: {

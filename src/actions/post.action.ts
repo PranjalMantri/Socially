@@ -176,8 +176,6 @@ export async function createComment(postId: string, content: string) {
       return newComment;
     });
 
-    console.log(result);
-
     revalidatePath("/");
     return { success: true, result };
   } catch (err) {
