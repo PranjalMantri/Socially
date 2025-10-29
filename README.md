@@ -12,19 +12,24 @@ A modern, full-stack social media platform built with Next.js, TypeScript, Prism
 - 🌗 **Light/Dark Mode Toggle**
 - 📱 **Responsive Design** (Desktop & Mobile Navbars)
 - ⚡ **Fast & Modern UI** (Shadcn UI, Skeletons, Dialogs)
-- 🔒 **Authentication** (NextAuth.js)
+- 🔒 **Authentication** (Clerk)
 - 🗄️ **Database** (Prisma + PostgreSQL)
+
+## 🎬 Live Demo & Video
+
+- **Live Website:** https://socially-topaz.vercel.app/
+- **Video Demo:** https://www.youtube.com/watch?v=XmoHYmE_kZs
 
 ## Tech Stack
 
-- [Next.js](https://nextjs.org/) (App Router)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Prisma](https://www.prisma.io/) ORM
-- [PostgreSQL](https://www.postgresql.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [NextAuth.js](https://next-auth.js.org/)
-- [UploadThing](https://uploadthing.com/) (for file uploads)
-- [Shadcn UI](https://ui.shadcn.com/) (UI components)
+- Nextjs (App Router)
+- TypeScript
+- Prisma ORM
+- PostgreSQL
+- Tailwind CSS
+- Clerk
+- UploadThing(for file uploads)
+- Shadcn UI (UI components)
 
 ## Getting Started
 
